@@ -1,9 +1,12 @@
 const express = require('express');
 const {createTodo, updateTodo} = require('./types');
 const {todoapp} = require('./db');
+
+const cors = require("cors");
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.get('/todo', async (req, res) => {
    const todo = await todoapp.find({});
@@ -44,14 +47,22 @@ app.put('/completed', async (req,res) => {
     }
 
     // update mongodb
-   await todoapp.update({
-    _id : updateTodo.id
+   await todoapp.findOneAndUpdate({
+    _id : updatedtodo.id
    }, {
     completed : true
+   }, {
+    new : true
    });
 
    res.json({
     msg : 'user update'
    });
 
+});
+
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
